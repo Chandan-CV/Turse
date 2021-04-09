@@ -1,24 +1,30 @@
-import logo from './logo.svg';
 import './App.css';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route
+} from "react-router-dom";
+import LoginScreen from './Screens/AuthProcess/LoginScreen';
+import SignUpScreen from './Screens/AuthProcess/SignUpScreen';
+import { Button } from '@material-ui/core';
+import { auth } from './Fire';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+  <Router>
+      <Switch>
+      <Route path="/login">
+      <LoginScreen/>
+      </Route> 
+      <Route path="/signup">
+      <SignUpScreen/>
+      </Route>
+          <Route path="/">
+              <h1>this is the home screen</h1>
+              <Button variant="outlined" onClick={()=>{auth.signOut()}} > logout </Button>
+          </Route>
+      </Switch>
+  </Router>
   );
 }
 
