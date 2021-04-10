@@ -11,6 +11,7 @@ import { auth } from './Fire';
 import HomeScreen from './Screens/HomeScreen';
 import React,{ useState } from 'react';
 import AddCourse from './Screens/AddCourse/AddCourse'
+import CoursePage from './Screens/CoursePage/CoursePage';
 
 export const Context = React.createContext();
 
@@ -31,6 +32,8 @@ auth.onAuthStateChanged((user) => {
     
     <Route path="/login">
     <LoginScreen/>
+    </Route>  <Route path="/coursepage">
+    <CoursePage/>
     </Route> 
     <Route path="/signup">
     <SignUpScreen/>

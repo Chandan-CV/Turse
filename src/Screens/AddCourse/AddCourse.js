@@ -1,11 +1,10 @@
-import firebase from 'firebase'
+import firebase from "firebase";
 import {
   Button,
   Dialog,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Icon,
   LinearProgress,
   TextField,
 } from "@material-ui/core";
@@ -16,7 +15,6 @@ import "../AddCourse/AddCourse.css";
 import Navbar from "../../components/navbar/Navbar";
 import { db, storage } from "../../Fire";
 import PlayVid from "../../components/PlayVid";
-import { Domain } from '@material-ui/icons';
 function AddCourse() {
   const history = useHistory();
   const user = useContext(Context);
@@ -25,25 +23,31 @@ function AddCourse() {
   const [file, setFile] = useState(null);
   const [FileURL, setFileURL] = useState("");
   const [progress, setProgress] = useState(0);
-  const [vidURL, setVidURL]=  useState("");
-const [lectureName, setLectureName] = useState("");
-const[name, setName]= useState("");
-const[domain, setdomain]= useState("");
-const[subDomain, setSubDomain]= useState("");
+  const [vidURL, setVidURL] = useState("");
+  const [lectureName, setLectureName] = useState("");
+  const [name, setName] = useState("");
+  const [domain, setdomain] = useState("");
+  const [subDomain, setSubDomain] = useState("");
+  const [thumbnail,setThumbnail]= useState(null)
+  const [thumbProgress, setThumbProgress] = useState(0);
+  const [TURI, setTURI] = useState("");
 
-useEffect(()=>{
-  if(user)
-  db.collection("Users").doc(user.uid).get().then((response)=>{
-    var data = response.data();
-    if (data.saved !== undefined){
-
-      setContent(data.saved.content)
-      setName(data.saved.name)
-      setdomain(data.saved.domain)
-      setSubDomain(data.saved.subDomain)
-    }
-  })
-},[user])
+  useEffect(() => {
+    if (user)
+      db.collection("Users")
+        .doc(user.uid)
+        .get()
+        .then((response) => {
+          var data = response.data();
+          if (data.saved !== undefined) {
+            setContent(data.saved.content);
+            setName(data.saved.name);
+            setdomain(data.saved.domain);
+            setSubDomain(data.saved.subDomain);
+            setTURI(data.saved.thumbnail)
+          }
+        });
+  }, [user]);
 
   const handleFileUpload = () => {
     if (file) {
@@ -69,85 +73,145 @@ useEffect(()=>{
             });
         }
       );
-    }
-    else{
-      alert("there is no file to upload")
+    } else {
+      alert("there is no file to upload");
     }
   };
+
+const handleThumbUpload=()=>{
+  if (thumbnail) {
+    const uploadTask = storage.ref(`thumbnails/${thumbnail.name}`).put(thumbnail);
+    uploadTask.on(
+      "stat_changed",
+      (snapshot) => {
+        const progress = Math.round(
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+        );
+        setThumbProgress(progress);
+      },
+      (error) => {
+        alert(error);
+      },
+      () => {
+        storage
+          .ref("thumbnails")
+          .child(thumbnail.name)
+          .getDownloadURL()
+          .then((url) => {
+            setTURI(url);
+          });
+      }
+    );
+  } else {
+    alert("there is no file to upload");
+  }
+
+}
+
+
+
 
   const handleLectureUpload = () => {
-    if(FileURL){
-      setContent([...content, {url:FileURL,name:lectureName, index: content.length, type:"custom"} ])
+    if (FileURL) {
+      setContent([
+        ...content,
+        {
+          url: FileURL,
+          name: lectureName,
+          index: content.length,
+          type: "custom",
+        },
+      ]);
+    } else if (vidURL) {
+      setContent([
+        ...content,
+        {
+          url: vidURL,
+          name: lectureName,
+          index: content.length,
+          type: "youtube",
+        },
+      ]);
+    } else {
+      alert("there is nothing to add");
     }
-    else if(vidURL){
-      setContent([...content, {url:vidURL,name:lectureName, index: content.length, type:"youtube"} ])
-
-    }else{
-      alert("there is nothing to add")
-
-    }
-    setDialogOpen(false)
-    setFile(null)
-    setFileURL("")
-    setLectureName("")
-    setVidURL("")
+    setDialogOpen(false);
+    setFile(null);
+    setFileURL("");
+    setLectureName("");
+    setVidURL("");
     setProgress(0);
-
   };
 
-// this happens when you click submit 
-const handleSubmit =async()=>{
-await db.collection("Eval").doc().set({
-  name:name,
-  domain:domain,
-  subDomain:subDomain,
-  userID: user.uid,
-  createdBy: user.displayName,
-  TOC: firebase.firestore.FieldValue.serverTimestamp(),
-  content:content,
-}).then(()=>{
-  db.collection("Users").doc(user.uid).update({
-    saved:firebase.firestore.FieldValue.delete()
-  }
-  ).then(()=>{
-    alert("done submitting");
-    setDialogOpen(false)
-    setFile(null)
-    setFileURL("")
-    setLectureName("")
-    setVidURL("")
-    setProgress(0);
-    setContent([])
+  // this happens when you click submit
+  const handleSubmit = async () => {
+  await   db
+      .collection("Courses")
+      .doc()
+      .set({
+        name: name,
+        domain: domain,
+        subDomain: subDomain,
+        userID: user.uid,
+        createdBy: user.displayName,
+        TOC: firebase.firestore.FieldValue.serverTimestamp(),
+        content: content,
+        thumbnail:TURI
+      })
+      .then(() => {
+      db.collection("Users")
+          .doc(user.uid)
+          .update({
+            saved: firebase.firestore.FieldValue.delete(),
+          })
+          .then(() => {
+            alert("done submitting");
+            setDialogOpen(false);
+            setFile(null);
+            setFileURL("");
+            setLectureName("");
+            setVidURL("");
+            setProgress(0);
+            setContent([]);
+            setThumbnail(null)
+            setTURI("")
+            setThumbProgress(0)
+           
+          });
+      });
+    await  db.collection("Categories").doc("domains").update({
+        [domain]:domain
+      }).then(async()=>{
+         await db.collection("Categories").doc("subDomains").update({
+          [subDomain]:subDomain
+        }).then(()=>{alert("done updating subdomains")
+      setdomain("")
+      setName("")
+      setSubDomain("")
+      })
+      })
+    };
 
-
-})
-
-})
-}
-
-
-
-
-///this happens when the user click on save
-const handleSave= async()=>{
-await db.collection("Users").doc(user.uid).update(
-  {
-    saved:{
-            name:name,
-            domain:domain,
-            subDomain:subDomain,
-            userID: user.uid,
-            createdBy: user.displayName,
-            TOC: firebase.firestore.FieldValue.serverTimestamp(),
-            content:content
-            }
-  }
-).then(()=>alert("course saved")).catch((err)=>alert(err))
-}
-
-
-
-
+  ///this happens when the user click on save
+  const handleSave = async () => {
+    await db
+      .collection("Users")
+      .doc(user.uid)
+      .update({
+        saved: {
+          name: name,
+          domain: domain,
+          subDomain: subDomain,
+          userID: user.uid,
+          createdBy: user.displayName,
+          TOC: firebase.firestore.FieldValue.serverTimestamp(),
+          content: content,
+          thumbnail:TURI
+        },
+      })
+      .then(() => alert("course saved"))
+      .catch((err) => alert(err));
+  };
 
   return (
     <div>
@@ -159,39 +223,73 @@ await db.collection("Users").doc(user.uid).update(
           variant="outlined"
           style={{ width: "60%", marginTop: 70 }}
           value={name}
-          onChange={(e)=>{setName(e.target.value)}}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
         />
         <TextField
           label="enter the domain, eg: Development or Design"
           variant="outlined"
           style={{ width: "60%", marginTop: 70 }}
           value={domain}
-          onChange={(e)=>{setdomain(e.target.value)}}
+          onChange={(e) => {
+            setdomain(e.target.value);
+          }}
         />
         <TextField
           label="enter the sub domain, eg Mobile Development or Photoshop"
           variant="outlined"
           style={{ width: "60%", marginTop: 70 }}
           value={subDomain}
-          onChange={(e)=>{setSubDomain(e.target.value)}}
+          onChange={(e) => {
+            setSubDomain(e.target.value);
+          }}
         />
+
       </div>
       <div className="mainAxis">
+    <p>select a thumbnail for the course</p>
+      <input
+   type="file"
+   onChange={(e)=>{
+     setThumbnail(e.target.files[0]);
+    }}
+  />
+  <Button onClick={()=>{handleThumbUpload()}}>upload thumbnail</Button>
+  <LinearProgress
+  variant="determinate"
+  value={thumbProgress}
+  style={{ height: "2px", width: "50%", marginTop: 10 }}
+/>
+{TURI.length>0?
+  <img
+  src={TURI}
+  style={{height:200, width:200}}
+  />
+  :null}
         <h1>course content</h1>
-          {content.map((element)=>{
-            return(
-                <div style={{display:"flex", flexDirection:"row", justifyContent:"space-around", backgroundColor:"lightgray", marginTop:20, width:"100%", alignItems:"center"}}>
-                {element.type==="youtube"?<PlayVid url={element.url} width={150} height={150}/>:
-              <iframe
-              src={element.url}
-              width={150}
-              height={150}
-              />
-              }
-                <p>{element.name}</p>
-                </div>
-            );
-          })}   
+        {content.map((element) => {
+          return (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-around",
+                backgroundColor: "lightgray",
+                marginTop: 20,
+                width: "100%",
+                alignItems: "center",
+              }}
+            >
+              {element.type === "youtube" ? (
+                <PlayVid url={element.url} width={150} height={150} />
+              ) : (
+                <iframe src={element.url} width={150} height={150} />
+              )}
+              <p>{element.name}</p>
+            </div>
+          );
+        })}
         <Button
           variant="outlined"
           onClick={() => {
@@ -201,25 +299,39 @@ await db.collection("Users").doc(user.uid).update(
           Add
         </Button>
 
-        <div style={{marginTop:30,display:"flex", flexDirection:"row",marginBottom:50}}>
-        <div>
-        <Button variant="outlined" 
-        style={{marginRight:40}}
-        onClick={()=>{handleSave()}}
-        >Save</Button>
+        <div
+          style={{
+            marginTop: 30,
+            display: "flex",
+            flexDirection: "row",
+            marginBottom: 50,
+          }}
+        >
+          <div>
+            <Button
+              variant="outlined"
+              style={{ marginRight: 40 }}
+              onClick={() => {
+                handleSave();
+              }}
+            >
+              Save
+            </Button>
+          </div>
+          <div>
+            <Button
+              variant="outlined"
+              style={{ marginLeft: 40 }}
+              onClick={() => {
+                handleSubmit();
+              }}
+            >
+              Submit
+            </Button>
+          </div>
         </div>
-        <div>
-        <Button variant="outlined" style={{marginLeft:40}}
-        onClick={()=>{handleSubmit()}}
-        >Submit</Button>
-        </div>
-        </div>
 
-
-
-
-      {/*this is the dialog box  */}
-
+        {/*this is the dialog box  */}
 
         <Dialog
           open={dialogOpen}
@@ -235,89 +347,102 @@ await db.collection("Users").doc(user.uid).update(
               alignItems: "center",
             }}
           >
-          <TextField
-          margin="dense"
-          id="lectureName"
-          label="enter the name of the lecture"
-          type="name"
-          fullWidth
-          variant="outlined"
-          value={lectureName}
-          onChange={(e)=>{setLectureName(e.target.value)}}
-          />
-          {file?null :
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}>
-            <DialogContentText>
-            enter the url of the youtube video
-            </DialogContentText>
             <TextField
-            autoFocus
-            margin="dense"
-            id="url"
-            label="enter url"
-            type="url"
-            fullWidth
-            variant="outlined"
-            value={vidURL}
-            onChange={(e)=>{setVidURL(e.target.value)}}
+              margin="dense"
+              id="lectureName"
+              label="enter the name of the lecture"
+              type="name"
+              fullWidth
+              variant="outlined"
+              value={lectureName}
+              onChange={(e) => {
+                setLectureName(e.target.value);
+              }}
             />
-            <h3>Or</h3>
-            </div>
-          }
- 
-          {vidURL.length>0?null:
-            <div style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-            }}>
-            <DialogContentText>
-            you can upload any pdf or an image file
-            </DialogContentText>
-            <input
-            type="file"
-            onChange={(e) => {
-              setFile(e.target.files[0]);
-            }}
-            />
-            <Button
-            variant="outlined"
-            style={{ marginTop: 20 }}
-            onClick={() => {
-              handleFileUpload();
-            }}
-            >
-            upload
-            </Button>
-            <LinearProgress
-            variant="determinate"
-            value={progress}
-            style={{ height: "2px", width: "100%", marginTop: 10 }}
-            />
-            </div>
-          }
-          <hr
-          style={{
-            height: 1,
-            width: "100%",
-            color: "black",
+            {file ? null : (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <DialogContentText>
+                  enter the url of the youtube video
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="url"
+                  label="enter url"
+                  type="url"
+                  fullWidth
+                  variant="outlined"
+                  value={vidURL}
+                  onChange={(e) => {
+                    setVidURL(e.target.value);
+                  }}
+                />
+                <h3>Or</h3>
+              </div>
+            )}
+
+            {vidURL.length > 0 ? null : (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <DialogContentText>
+                  you can upload any pdf or an image file
+                </DialogContentText>
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    setFile(e.target.files[0]);
+                  }}
+                />
+                <Button
+                  variant="outlined"
+                  style={{ marginTop: 20 }}
+                  onClick={() => {
+                    handleFileUpload();
+                  }}
+                >
+                  upload
+                </Button>
+                <LinearProgress
+                  variant="determinate"
+                  value={progress}
+                  style={{ height: "2px", width: "100%", marginTop: 10 }}
+                />
+              </div>
+            )}
+            <hr
+              style={{
+                height: 1,
+                width: "100%",
+                color: "black",
                 backgroundColor: "black",
                 marginTop: 20,
               }}
             />
             <Button
-            variant="outlined" 
-            style={{ marginTop: 20 }} 
-            onClick={()=>{handleLectureUpload()}}
+              variant="outlined"
+              style={{ marginTop: 20 }}
+              onClick={() => {
+                handleLectureUpload();
+              }}
             >
               Add
             </Button>
           </DialogContent>
         </Dialog>
+
+
+    
       </div>
     </div>
   );
@@ -326,6 +451,6 @@ await db.collection("Users").doc(user.uid).update(
 //   var newcontent = content
 //   newcontent = newcontent.pop(element.index)
 //   setContent(newcontent)
-// }}><DeleteIcon style={{cursor:"pointer"}} /></div> 
+// }}><DeleteIcon style={{cursor:"pointer"}} /></div>
 
 export default AddCourse;

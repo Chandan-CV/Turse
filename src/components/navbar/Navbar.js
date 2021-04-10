@@ -49,8 +49,8 @@ export default function Header() {
   const user = useContext(Context);
   const [headersData, setHeadesData] = useState([
     {
-      label: "About Us",
-      href: "/About",
+      label: "Home",
+      href: "/",
     },
     {
       label: "Add Course",
@@ -76,8 +76,8 @@ export default function Header() {
     
     setHeadesData([
       {
-        label: "About Us",
-        href: "/About",
+        label: "Home",
+        href: "/",
       },
       {
         label: "Add Course",

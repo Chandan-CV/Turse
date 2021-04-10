@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 const YoutubeEmbed = ({ embedId, width, height }) => (
     <div className="video-responsive">
       <iframe
+      id="player"
         width={width}
         height={height}
         src={`https://www.youtube.com/embed/${embedId}?rel=0`}
@@ -22,7 +23,7 @@ function PlayVid({url, width, height}) {
     const [id,getID]= useState("");
     useEffect(()=>{
         getID(getYouTubeID(url))
-    },[])
+    },[url])
   
     return (
     <YoutubeEmbed embedId={id} width={width} height={height} />
