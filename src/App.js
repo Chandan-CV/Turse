@@ -26,7 +26,7 @@ auth.onAuthStateChanged((user) => {
     <Router>
     <Switch>
     <Route path="/addCourse">
-    <AddCourse/>
+    {user?<AddCourse/>:<LoginScreen/>}
     </Route> 
     
     <Route path="/login">

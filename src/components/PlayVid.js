@@ -2,14 +2,14 @@ import { YouTube } from '@material-ui/icons'
 import getYouTubeID from 'get-youtube-id';
 import React, { useEffect, useState } from 'react'
 
-const YoutubeEmbed = ({ embedId }) => (
+const YoutubeEmbed = ({ embedId, width, height }) => (
     <div className="video-responsive">
       <iframe
-        width="853"
-        height="480"
+        width={width}
+        height={height}
         src={`https://www.youtube.com/embed/${embedId}?rel=0`}
         frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allow="accelerometer;  clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         title="Embedded youtube"
         
@@ -18,14 +18,14 @@ const YoutubeEmbed = ({ embedId }) => (
   );
 
 
-function PlayVid({url}) {
+function PlayVid({url, width, height}) {
     const [id,getID]= useState("");
     useEffect(()=>{
         getID(getYouTubeID(url))
     },[])
   
     return (
-    <YoutubeEmbed embedId={id} />
+    <YoutubeEmbed embedId={id} width={width} height={height} />
     )
 }
 

@@ -8,7 +8,7 @@ function HomeScreen() {
         <div>
             <Navbar/>
             <Announcements/>
-            <PlayVid url="https://youtu.be/rokGy0huYEA"/>
+            <PlayVid url="https://youtu.be/rokGy0huYEA" width={800} height={500}/>
             <ContinueLearning/>
         </div>
     )
