@@ -1,4 +1,5 @@
 import './App.css';
+import Navbar from "./components/navbar/Navbar";
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,24 +9,38 @@ import LoginScreen from './Screens/AuthProcess/LoginScreen';
 import SignUpScreen from './Screens/AuthProcess/SignUpScreen';
 import { Button } from '@material-ui/core';
 import { auth } from './Fire';
+import HomeScreen from './Screens/HomeScreen';
+import React,{ useState } from 'react';
+
+
+export const Context = React.createContext();
 
 function App() {
+  const [user, setUser] = useState(null);
+auth.onAuthStateChanged((user) => {
+  if (user) {
+    setUser(user)
+  }
+});
   return (
-  <Router>
-      <Switch>
-      <Route path="/login">
-      <LoginScreen/>
-      </Route> 
-      <Route path="/signup">
-      <SignUpScreen/>
-      </Route>
-          <Route path="/">
-              <h1>this is the home screen</h1>
-              <Button variant="outlined" onClick={()=>{auth.signOut()}} > logout </Button>
-          </Route>
-      </Switch>
-  </Router>
-  );
+    <Context.Provider value={user}>
+    <Router>
+    <Switch>
+    <Route path="/login">
+    <LoginScreen/>
+    </Route> 
+    <Route path="/signup">
+    <SignUpScreen/>
+    </Route>
+    <Route path="/">
+    <div>
+    <HomeScreen/>
+    </div> 
+    </Route>
+    </Switch>
+    </Router>
+    </Context.Provider>
+    );
 }
 
 export default App;
