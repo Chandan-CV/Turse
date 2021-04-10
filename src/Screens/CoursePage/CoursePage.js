@@ -6,6 +6,8 @@ import Navbar from '../../components/navbar/Navbar'
 import "../CoursePage/CoursePage.css"
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import DescriptionIcon from '@material-ui/icons/Description';
+import Disqus from 'disqus-react';
+
 function CoursePage() {
     const id= useLocation().state;
     const [data, setData] = useState(null);
@@ -23,7 +25,8 @@ function CoursePage() {
             <Navbar/>
             <div style={{display:'flex'}}>
             
-            {state?<PlayVid  url={state.url} width={950} height={400} />:<h1>loading video</h1>}
+            {state?.type=="youtube"?<PlayVid  url={state.url} width={950} height={400} />:null}
+            {state?.type=="custom"?<iframe src={state.url }  width={950} height={400} />:null}
             <div className='rhs'>
             <p>Course Content</p>
             {data && state? data.content.map((element)=>{
@@ -37,7 +40,20 @@ function CoursePage() {
             }) :null}
             </div>
             </div>
-           
+            {data?
+                <div style={{marginTop:300}}>
+                <Disqus.DiscussionEmbed
+                shortname="Ularn"
+                config={ 
+                    {url: "http://localhost:3000/coursepage",
+                    identifier: id.id,
+                    title: data.name
+                }
+            }
+            />
+            </div>
+            : null}
+
 
         </div>
     )

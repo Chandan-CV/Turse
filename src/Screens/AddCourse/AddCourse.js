@@ -26,8 +26,7 @@ function AddCourse() {
   const [vidURL, setVidURL] = useState("");
   const [lectureName, setLectureName] = useState("");
   const [name, setName] = useState("");
-  const [domain, setdomain] = useState("");
-  const [subDomain, setSubDomain] = useState("");
+  const [tags, settags] = useState("");
   const [thumbnail,setThumbnail]= useState(null)
   const [thumbProgress, setThumbProgress] = useState(0);
   const [TURI, setTURI] = useState("");
@@ -42,8 +41,7 @@ function AddCourse() {
           if (data.saved !== undefined) {
             setContent(data.saved.content);
             setName(data.saved.name);
-            setdomain(data.saved.domain);
-            setSubDomain(data.saved.subDomain);
+            settags((data.saved.tags).toString());
             setTURI(data.saved.thumbnail)
           }
         });
@@ -150,8 +148,7 @@ const handleThumbUpload=()=>{
       .doc()
       .set({
         name: name,
-        domain: domain,
-        subDomain: subDomain,
+        tags: tags.split(",").map(item => item.trim()),
         userID: user.uid,
         createdBy: user.displayName,
         TOC: firebase.firestore.FieldValue.serverTimestamp(),
@@ -176,20 +173,14 @@ const handleThumbUpload=()=>{
             setThumbnail(null)
             setTURI("")
             setThumbProgress(0)
+            setName("")
+            settags("")
            
           });
       });
-    await  db.collection("Categories").doc("domains").update({
-        [domain]:domain
-      }).then(async()=>{
-         await db.collection("Categories").doc("subDomains").update({
-          [subDomain]:subDomain
-        }).then(()=>{alert("done updating subdomains")
-      setdomain("")
-      setName("")
-      setSubDomain("")
-      })
-      })
+
+      
+      
     };
 
   ///this happens when the user click on save
@@ -200,8 +191,7 @@ const handleThumbUpload=()=>{
       .update({
         saved: {
           name: name,
-          domain: domain,
-          subDomain: subDomain,
+          tags: tags.split(",").map(item => item.trim()),
           userID: user.uid,
           createdBy: user.displayName,
           TOC: firebase.firestore.FieldValue.serverTimestamp(),
@@ -227,35 +217,29 @@ const handleThumbUpload=()=>{
             setName(e.target.value);
           }}
         />
+      
         <TextField
-          label="enter the domain, eg: Development or Design"
+          label="enter tags separated by a comma. eg react native, javascript, mobile"
+          multiline= {true}
           variant="outlined"
           style={{ width: "60%", marginTop: 70 }}
-          value={domain}
+          value={tags}
           onChange={(e) => {
-            setdomain(e.target.value);
-          }}
-        />
-        <TextField
-          label="enter the sub domain, eg Mobile Development or Photoshop"
-          variant="outlined"
-          style={{ width: "60%", marginTop: 70 }}
-          value={subDomain}
-          onChange={(e) => {
-            setSubDomain(e.target.value);
+            settags(e.target.value);
           }}
         />
 
       </div>
-      <div className="mainAxis">
+      <div className="mainAxis" style={{marginTop:30}}>
     <p>select a thumbnail for the course</p>
       <input
+      style={{marginTop:20, marginBottom:30}}
    type="file"
    onChange={(e)=>{
      setThumbnail(e.target.files[0]);
     }}
   />
-  <Button onClick={()=>{handleThumbUpload()}}>upload thumbnail</Button>
+  <Button onClick={()=>{handleThumbUpload()}} variant="outlined">upload thumbnail</Button>
   <LinearProgress
   variant="determinate"
   value={thumbProgress}

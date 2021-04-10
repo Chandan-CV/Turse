@@ -56,18 +56,12 @@ export default function Header() {
       label: "Add Course",
       href: "/addCourse",
     },
-    {
-      label: "My Courses",
-      href: "/account",
-    },
+ 
     {
       label: "login",
       href: "/login",
     },
-    {
-      label: "Contact No",
-      href: "/contactno",
-    },
+ 
   ]);
 
   useEffect(() => {
@@ -83,17 +77,10 @@ export default function Header() {
         label: "Add Course",
         href: "/addCourse",
       },
-      {
-        label: "My Courses",
-        href: "/account",
-      },
+   
       {
         label: "logout",
         href: "/",
-      },
-      {
-        label: "Contact No",
-        href: "/contactno",
       },
     ]);
   }
