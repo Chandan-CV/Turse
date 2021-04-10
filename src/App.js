@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 import LoginScreen from './Screens/AuthProcess/LoginScreen';
 import SignUpScreen from './Screens/AuthProcess/SignUpScreen';
-import { Button } from '@material-ui/core';
 import { auth } from './Fire';
 import HomeScreen from './Screens/HomeScreen';
 import React,{ useState } from 'react';
