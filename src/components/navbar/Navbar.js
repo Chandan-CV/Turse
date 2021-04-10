@@ -12,25 +12,8 @@ import {
 import MenuIcon from "@material-ui/icons/Menu";
 import React, { useState, useEffect, useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
-
-const headersData = [
-  {
-    label: "About Us",
-    href: "/About",
-  },
-  {
-    label: "My Courses",
-    href: "/account",
-  },
-  {
-    label: "login",
-    href: "/login",
-  },
-  {
-    label: "Contact No",
-    href: "/contactno",
-  },
-];
+import { Context } from "../../App";
+import { auth } from "../../Fire";
 
 const useStyles = makeStyles(() => ({
   header: {
@@ -63,6 +46,59 @@ const useStyles = makeStyles(() => ({
 }));
 
 export default function Header() {
+  const user = useContext(Context);
+  const [headersData, setHeadesData] = useState([
+    {
+      label: "About Us",
+      href: "/About",
+    },
+    {
+      label: "Add Course",
+      href: "/addCourse",
+    },
+    {
+      label: "My Courses",
+      href: "/account",
+    },
+    {
+      label: "login",
+      href: "/login",
+    },
+    {
+      label: "Contact No",
+      href: "/contactno",
+    },
+  ]);
+
+  useEffect(() => {
+    if (user){
+
+    
+    setHeadesData([
+      {
+        label: "About Us",
+        href: "/About",
+      },
+      {
+        label: "Add Course",
+        href: "/addCourse",
+      },
+      {
+        label: "My Courses",
+        href: "/account",
+      },
+      {
+        label: "logout",
+        href: "/",
+      },
+      {
+        label: "Contact No",
+        href: "/contactno",
+      },
+    ]);
+  }
+  }, [user]);
+
   const { header, logo, menuButton, toolbar, drawerContainer } = useStyles();
 
   const [state, setState] = useState({
@@ -120,8 +156,7 @@ export default function Header() {
             onClose: handleDrawerClose,
           }}
         >
-        <div className={drawerContainer}>{getDrawerChoices()}</div>
-
+          <div className={drawerContainer}>{getDrawerChoices()}</div>
         </Drawer>
 
         <div>{UlarnLogo}</div>
@@ -131,24 +166,38 @@ export default function Header() {
 
   const getDrawerChoices = () => {
     return headersData.map(({ label, href }) => {
-      return (
+      if (label == "logout") {
+        return (
+          <MenuItem>
+            {" "}
+            <a
+              onClick={() => {
+                auth.signOut();
+              }}
+            >
+              {label}
+            </a>
+          </MenuItem>
+        );
+            }
 
-
-        <Link
-          {...{
-            component: RouterLink,
-            to: href,
-            color: "inherit",
-            style: { textDecoration: "none" },
-            key: label,
-          }}
-        >
-          <MenuItem>{label}</MenuItem>
-        </Link>
-      );
-    });
-  };
-
+        else{return (
+            <Link
+            {...{
+              component: RouterLink,
+              to: href,
+              color: "inherit",
+              style: { textDecoration: "none" },
+              key: label,
+            }}
+            >
+            <MenuItem>{label}</MenuItem>
+            </Link>
+            );
+          }
+          });
+        };
+        
   const UlarnLogo = (
     <Typography variant="h6" component="h1" className={logo}>
       Ularn
@@ -157,8 +206,9 @@ export default function Header() {
 
   const getMenuButtons = () => {
     return headersData.map(({ label, href }) => {
-      return (
-        <Button
+      if (label == "logout") {
+        return (
+          <Button
           {...{
             key: label,
             color: "inherit",
@@ -166,8 +216,24 @@ export default function Header() {
             component: RouterLink,
             className: menuButton,
           }}
-        >
-          {label}
+          onClick={()=>{auth.signOut().then(()=>window.location.reload())}}
+          >
+              {label}
+              </Button>
+        );
+            }
+      return (
+        <Button
+          {...{
+            key: label,
+            color: "inherit",
+            className: menuButton,
+            to: href,
+            component: RouterLink,
+            className: menuButton,
+            }}
+        
+          >{label}
         </Button>
       );
     });

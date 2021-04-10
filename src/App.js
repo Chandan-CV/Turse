@@ -10,7 +10,7 @@ import SignUpScreen from './Screens/AuthProcess/SignUpScreen';
 import { auth } from './Fire';
 import HomeScreen from './Screens/HomeScreen';
 import React,{ useState } from 'react';
-
+import AddCourse from './Screens/AddCourse/AddCourse'
 
 export const Context = React.createContext();
 
@@ -25,6 +25,10 @@ auth.onAuthStateChanged((user) => {
     <Context.Provider value={user}>
     <Router>
     <Switch>
+    <Route path="/addCourse">
+    <AddCourse/>
+    </Route> 
+    
     <Route path="/login">
     <LoginScreen/>
     </Route> 
@@ -32,9 +36,7 @@ auth.onAuthStateChanged((user) => {
     <SignUpScreen/>
     </Route>
     <Route path="/">
-    <div>
-    <HomeScreen/>
-    </div> 
+    <HomeScreen/> 
     </Route>
     </Switch>
     </Router>
