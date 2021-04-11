@@ -20,7 +20,8 @@ function SignUpScreen() {
                   email:email,
                   address:null,
                   role:"user",
-                  timeOfCreation: firebase.firestore.FieldValue.serverTimestamp()
+                  timeOfCreation: firebase.firestore.FieldValue.serverTimestamp(),
+                  continue:null
                 }
             )
                 auth.currentUser.sendEmailVerification("http://localhost:3000/").catch((err)=>{console.log(err)});

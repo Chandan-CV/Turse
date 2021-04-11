@@ -1,12 +1,17 @@
 import SearchBar from 'material-ui-search-bar';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { Context } from '../../App';
 import { db } from '../../Fire';
+import ContinueLearning from '../ContinueLearning';
 import CourseCard from './CourseCard'
 
 
 function ShowCourses() {
+    const user = useContext(Context)
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm]= useState("");
+  
+
     useEffect(async()=>{
         await db.collection("Courses").get().then((snap)=>{
             setData(
@@ -19,6 +24,8 @@ function ShowCourses() {
                 );
         })
     },[])
+
+ 
 
     const handleSearch = async()=>{
         if(searchTerm.length>0){
@@ -50,6 +57,7 @@ function ShowCourses() {
     return (
         <div>
         <div style={{padding:40}}>
+        <ContinueLearning/>
         <SearchBar
         placeholder="Search for courses"
         value={searchTerm}
@@ -66,13 +74,13 @@ function ShowCourses() {
         }}
         >
         
-        {data.map((course)=>{
+        {data.length>0?data.map((course)=>{
             return <CourseCard thumbnail={course.data.thumbnail} 
             title={course.data.name} 
             creator={course.data.createdBy} 
             id={course.id} 
             key={course.id}/>
-        })}
+        }):null}
         </div>
         </div>
         )

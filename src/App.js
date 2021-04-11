@@ -3,25 +3,33 @@ import Navbar from "./components/navbar/Navbar";
 import {
   BrowserRouter as Router,
   Switch,
-  Route
+  Route,
+  useHistory
 } from "react-router-dom";
 import LoginScreen from './Screens/AuthProcess/LoginScreen';
 import SignUpScreen from './Screens/AuthProcess/SignUpScreen';
 import { auth } from './Fire';
 import HomeScreen from './Screens/HomeScreen';
-import React,{ useState } from 'react';
+import React,{ useEffect, useState } from 'react';
 import AddCourse from './Screens/AddCourse/AddCourse'
 import CoursePage from './Screens/CoursePage/CoursePage';
+import MyCourses from './Screens/MyCourses';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@material-ui/core';
 
 export const Context = React.createContext();
 
 function App() {
+  const history = useHistory();
   const [user, setUser] = useState(null);
-auth.onAuthStateChanged((user) => {
-  if (user) {
-    setUser(user)
-  }
-});
+ 
+useEffect(()=>{
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      setUser(user)
+    }
+  });
+},[])
   return (
     <Context.Provider value={user}>
     <Router>
@@ -32,7 +40,11 @@ auth.onAuthStateChanged((user) => {
     
     <Route path="/login">
     <LoginScreen/>
-    </Route>  <Route path="/coursepage">
+    </Route>  
+    <Route path="/mycourses">
+    {user?<MyCourses/>:<LoginScreen/>}
+    </Route>
+    <Route path="/coursepage">
     <CoursePage/>
     </Route> 
     <Route path="/signup">
@@ -44,6 +56,8 @@ auth.onAuthStateChanged((user) => {
     </Switch>
     </Router>
     </Context.Provider>
+    
+    
     );
 }
 

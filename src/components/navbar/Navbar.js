@@ -14,7 +14,8 @@ import React, { useState, useEffect, useContext } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Context } from "../../App";
 import { auth } from "../../Fire";
-
+import '../navbar/Navbar.css'
+import logo from '../../assets/logo.svg'
 const useStyles = makeStyles(() => ({
   header: {
     backgroundColor: "#400CCC",
@@ -53,6 +54,10 @@ export default function Header() {
       href: "/",
     },
     {
+      label:"My Courses",
+      href:"/mycourses"
+    },
+    {
       label: "Add Course",
       href: "/addCourse",
     },
@@ -72,6 +77,10 @@ export default function Header() {
       {
         label: "Home",
         href: "/",
+      },
+      {
+        label:"My Courses",
+        href:"/mycourses"
       },
       {
         label: "Add Course",
@@ -158,9 +167,7 @@ export default function Header() {
           <MenuItem>
             {" "}
             <a
-              onClick={() => {
-                auth.signOut();
-              }}
+            onClick={()=>{auth.signOut().then(()=>window.location.reload())}}
             >
               {label}
             </a>
@@ -186,9 +193,7 @@ export default function Header() {
         };
         
   const UlarnLogo = (
-    <Typography variant="h6" component="h1" className={logo}>
-      Ularn
-    </Typography>
+ <p className="logo" >Ularn</p>
   );
 
   const getMenuButtons = () => {

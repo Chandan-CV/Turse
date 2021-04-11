@@ -1,7 +1,5 @@
 .outerDiv{
     cursor: pointer;
-    border: 1px solid black;
-    border-radius: 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -9,9 +7,15 @@
     margin: 20px 20px;
     max-width: fit-content;
     text-align: center;
+    max-width: 200px;
 }
 
 .title{
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 400;
+}
+.outermost{
+    border: 1px solid black;
+    border-radius: 10px;
+    margin: 20px 20px;
 }

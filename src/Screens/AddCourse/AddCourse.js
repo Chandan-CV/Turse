@@ -258,10 +258,10 @@ const handleThumbUpload=()=>{
               style={{
                 display: "flex",
                 flexDirection: "row",
-                justifyContent: "space-around",
+                justifyContent: "space-evenly",
                 backgroundColor: "lightgray",
                 marginTop: 20,
-                width: "100%",
+                width: "90%",
                 alignItems: "center",
               }}
             >

@@ -4,6 +4,14 @@
     flex-direction: column;
     align-items: center;
    
+    height: 120vh;
+    overflow-y:scroll ;
+   
+}
+.lhs{
+    display: flex;
+    flex:2.5;
+   
 }
 .CC{ 
     cursor: pointer;
@@ -28,4 +36,22 @@
     padding: 5px;
     border-radius: 10px;
     background-color: #cccccc;
+}
+
+.mainContainer{
+    display: flex;
+    flex-direction: row;
+
+}
+
+@media(max-width:1100px){
+.mainContainer{
+    display: flex;
+    flex-direction: column;
+    
+
+}
+.video-responsive{
+    width:100
+}
 }

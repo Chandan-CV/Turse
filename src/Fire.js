@@ -18,9 +18,11 @@ if (firebase.apps.length == 0) {
   init();
 }
 
+
 const db = firebase.firestore();
 const auth = firebase.auth();
 const storage = firebase.storage();
+
 
 
 
@@ -41,6 +43,7 @@ const signInWithGoogle = (history) => {
             address: null,
             role: "user",
             timeOfCreation: firebase.firestore.FieldValue.serverTimestamp(),
+            continue: null
           });
         }
         history.push("/");
