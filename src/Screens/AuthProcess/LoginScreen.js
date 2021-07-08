@@ -19,7 +19,7 @@ function LoginScreen() {
   };
   return (
     <div>
-    <form>
+    
     <div className="LoginMain">
     <div className="LoginCard">
     <div className="header">
@@ -87,7 +87,7 @@ function LoginScreen() {
     </div>
     </div>
     </div>
-    </form>
+    
     </div>
   );
 }

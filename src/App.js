@@ -44,7 +44,7 @@ useEffect(()=>{
     <Route path="/mycourses">
     {user?<MyCourses/>:<LoginScreen/>}
     </Route>
-    <Route path="/coursepage">
+    <Route path="/coursepage/:FieldValue">
     <CoursePage/>
     </Route> 
     <Route path="/signup">

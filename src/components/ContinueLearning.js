@@ -35,7 +35,13 @@ await db.collection("Users").doc(user.uid).get().then((response)=>{
             <div>
             
             <p style={{fontSize:25, fontWeight:700}}>Continue Learning</p>
-            <CourseCard thumbnail={course.data.thumbnail} id={course.id} title={course.data.name} creator={course.data.createdBy} state={userData.continue.state} edit={false} />
+            <CourseCard 
+            thumbnail={course.data.thumbnail} 
+            id={course.id} 
+            title={course.data.name} 
+            creator={course.data.createdBy} 
+            state={userData.continue.state} 
+            edit={false} />
    
             </div>
             )

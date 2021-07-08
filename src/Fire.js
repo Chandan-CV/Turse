@@ -22,7 +22,7 @@ if (firebase.apps.length == 0) {
 const db = firebase.firestore();
 const auth = firebase.auth();
 const storage = firebase.storage();
-
+const rtdb = firebase.database();
 
 
 
@@ -53,4 +53,4 @@ const signInWithGoogle = (history) => {
 
 
 
-export { db, auth, storage, signInWithGoogle, init, firebase };
+export { db, auth, storage,rtdb, signInWithGoogle, init, firebase };

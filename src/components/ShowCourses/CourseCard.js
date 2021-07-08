@@ -29,9 +29,9 @@ function CourseCard({thumbnail,title,creator, id, state,edit,course}) {
         <div>
         <Card className="outerDiv" 
         onClick={()=>{if(state){
-            history.push("/coursepage", {id,state})}
+            history.push(`/coursepage/${id}`, {id,state})}
             else{ 
-                history.push("/coursepage", {id})}
+                history.push(`/coursepage/${id}`, {id})}
                 
             }
             

@@ -1,25 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router'
+import { useLocation, useParams } from 'react-router'
 import PlayVid from '../../components/PlayVid';
 import { db } from '../../Fire';
 import Navbar from '../../components/navbar/Navbar'
 import "../CoursePage/CoursePage.css"
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import DescriptionIcon from '@material-ui/icons/Description';
-import Disqus from 'disqus-react';
 import { Context } from '../../App';
 
 function CoursePage() {
     const user = useContext(Context)
+    const params = useParams().FieldValue;
     const id= useLocation().state;
     const [data, setData] = useState(null);
     const [state, setState]= useState(null);
     useEffect(
         async()=>{
-        
-            await db.collection("Courses").doc(id.id).get().then((response)=>{
+           
+            await db.collection("Courses").doc(params).get().then((response)=>{
                  setData(response.data())
-                 if (id.state){
+                 if (id?.state){
                     setState(id.state)
                  }else{
                      setState(response.data().content[0])
@@ -35,7 +35,7 @@ function CoursePage() {
             await db.collection("Users").doc(user.uid).update({
                 continue:
                 {
-                    id: id.id,
+                    id: params,
                     state:state,
                 }
             })
@@ -63,26 +63,11 @@ function CoursePage() {
                 <p>{element.index +1}. </p>
                 <p>{element.name}</p>
                 {element.type==="youtube"?<PlayCircleFilledIcon/>:<DescriptionIcon/> }
-
-              </div>
+                </div>
               )
             }) :null}
             </div>
             </div>
-            {data?
-                <div style={{marginTop:150}}>
-                <Disqus.DiscussionEmbed
-                shortname="Ularn"
-                config={ 
-                    {url: "http://localhost:3000/coursepage",
-                    identifier: id.id,
-                    title: data.name
-                }
-            }
-            />
-            </div>
-            : null}
-
 
         </div>
     )
